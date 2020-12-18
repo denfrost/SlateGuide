@@ -1,8 +1,8 @@
 // Copyright 1998-2019 Epic Games, Inc. All Rights Reserved.
 
-#include "SlateGuideModalWindow.h"
-#include "ModalWindowStyle.h"
-#include "ModalWindowCommands.h"
+#include "SlateGuide.h"
+#include "SlateGuideStyle.h"
+#include "SlateGuideCommands.h"
 #include "LevelEditor.h"
 #include "Widgets/Docking/SDockTab.h"
 #include "Widgets/Layout/SBox.h"
@@ -10,26 +10,30 @@
 #include <Widgets/Input/SButton.h>
 #include "Framework/MultiBox/MultiBoxBuilder.h"
 #include <EditorStyleSet.h>
+
+#include "Widgets/SNotificationsWidget.h"
+#include "Widgets/SBasicWidget.h"
 #include "Widgets/SDetailsViewWidget.h"
+#include "Widgets/SSceneOutlinerWidget.h"
 
-static const FName StyleGuideTabName("StyleGuideModalWindow");
+static const FName StyleGuideTabName("StyleGuideSlateGuide");
 
-#define LOCTEXT_NAMESPACE "FSlateGuideModalWindowModule"
+#define LOCTEXT_NAMESPACE "FSlateGuideModule"
 
-void FSlateGuideModalWindowModule::StartupModule()
+void FSlateGuideModule::StartupModule()
 {
 	// This code will execute after your module is loaded into memory; the exact timing is specified in the .uplugin file per-module
 	
-	FModalWindowStyle::Initialize();
-	FModalWindowStyle::ReloadTextures();
+	FSlateGuideStyle::Initialize();
+	FSlateGuideStyle::ReloadTextures();
 
-	FModalWindowCommands::Register();
+	FSlateGuideCommands::Register();
 	
 	PluginCommands = MakeShareable(new FUICommandList);
 
 	PluginCommands->MapAction(
-		FModalWindowCommands::Get().OpenPluginWindow,
-		FExecuteAction::CreateRaw(this, &FSlateGuideModalWindowModule::PluginButtonClicked),
+		FSlateGuideCommands::Get().OpenPluginWindow,
+		FExecuteAction::CreateRaw(this, &FSlateGuideModule::PluginButtonClicked),
 		FCanExecuteAction());
 		
 	FLevelEditorModule& LevelEditorModule = FModuleManager::LoadModuleChecked<FLevelEditorModule>("LevelEditor");
@@ -37,7 +41,7 @@ void FSlateGuideModalWindowModule::StartupModule()
 	//Register our Slate Modal Window in the Window dropdown of Unreal.
 	{
 		TSharedPtr<FExtender> MenuExtender = MakeShareable(new FExtender());
-		MenuExtender->AddMenuExtension("WindowLayout", EExtensionHook::After, PluginCommands, FMenuExtensionDelegate::CreateRaw(this, &FSlateGuideModalWindowModule::AddMenuExtension));
+		MenuExtender->AddMenuExtension("WindowLayout", EExtensionHook::After, PluginCommands, FMenuExtensionDelegate::CreateRaw(this, &FSlateGuideModule::AddMenuExtension));
 
 		LevelEditorModule.GetMenuExtensibilityManager()->AddExtender(MenuExtender);
 	}
@@ -45,31 +49,33 @@ void FSlateGuideModalWindowModule::StartupModule()
 	//Register our Slate Modal Window in the main toolbar beside Settings.
 	{
 		TSharedPtr<FExtender> ToolbarExtender = MakeShareable(new FExtender);
-		ToolbarExtender->AddToolBarExtension("Settings", EExtensionHook::After, PluginCommands, FToolBarExtensionDelegate::CreateRaw(this, &FSlateGuideModalWindowModule::AddToolbarExtension));
+		ToolbarExtender->AddToolBarExtension("Settings", EExtensionHook::After, PluginCommands, FToolBarExtensionDelegate::CreateRaw(this, &FSlateGuideModule::AddToolbarExtension));
 		
 		LevelEditorModule.GetToolBarExtensibilityManager()->AddExtender(ToolbarExtender);
 	}
 	
-	FGlobalTabmanager::Get()->RegisterNomadTabSpawner(StyleGuideTabName, FOnSpawnTab::CreateRaw(this, &FSlateGuideModalWindowModule::OnSpawnPluginTab))
+	FGlobalTabmanager::Get()->RegisterNomadTabSpawner(StyleGuideTabName, FOnSpawnTab::CreateRaw(this, &FSlateGuideModule::OnSpawnPluginTab))
 		.SetDisplayName(LOCTEXT("FSlateGuideTabName", "Slate Guide Modal Window"))
 		.SetMenuType(ETabSpawnerMenuType::Hidden);
 
+	DetailSettings = NewObject<USlateGuideDetailsViewSettings>();
+	DetailSettings->AddToRoot();
 }
 
-void FSlateGuideModalWindowModule::ShutdownModule()
+void FSlateGuideModule::ShutdownModule()
 {
 	// This function may be called during shutdown to clean up your module.  For modules that support dynamic reloading,
 	// we call this function before unloading the module.
-	FModalWindowStyle::Shutdown();
+	FSlateGuideStyle::Shutdown();
 
-	FModalWindowCommands::Unregister();
+	FSlateGuideCommands::Unregister();
 
 	FGlobalTabmanager::Get()->UnregisterNomadTabSpawner(StyleGuideTabName);
 }
 
-TSharedRef<SDockTab> FSlateGuideModalWindowModule::OnSpawnPluginTab(const FSpawnTabArgs& SpawnTabArgs)
+TSharedRef<SDockTab> FSlateGuideModule::OnSpawnPluginTab(const FSpawnTabArgs& SpawnTabArgs)
 {
-	FText ExampleText = LOCTEXT("ExampleWidgetText", "Slate Guide Examples");
+	FText ExampleText = LOCTEXT("ExampleWidgetText", "Slate Guide");
 
 	return SNew(SDockTab)
 		.TabRole(ETabRole::NomadTab)
@@ -91,12 +97,14 @@ TSharedRef<SDockTab> FSlateGuideModalWindowModule::OnSpawnPluginTab(const FSpawn
 					.Text(ExampleText)
 					.Font(FCoreStyle::GetDefaultFontStyle("Regular", 18))
 				]
+
 				+ SVerticalBox::Slot()
 				.AutoHeight()
 				.Padding(FMargin(4.0f))
 				[
 					SAssignNew(BasicWidget, SBasicWidget)
 				]
+
 				+ SVerticalBox::Slot()
 				.FillHeight(1.0f)
 				.MaxHeight(32.0f)
@@ -104,33 +112,56 @@ TSharedRef<SDockTab> FSlateGuideModalWindowModule::OnSpawnPluginTab(const FSpawn
 				[
 					SAssignNew(NotificationWidget, SNotificationsWidget)
 				]
+
 				+ SVerticalBox::Slot()
 				.FillHeight(1.0f)
-				.MaxHeight(32.0f)
-				.Padding(FMargin(4.0f))
+					.VAlign(VAlign_Fill)
+					.Padding(FMargin(4.0f))
 				[
-					SAssignNew(DetailsViewWidget, SDetailsViewWidget)
-				]
+
+					SNew(SBorder)
+					.BorderImage(FEditorStyle::GetBrush("ToolPanel.GroupBorder"))
+					.Padding(FMargin(4.0f))
+					[
+
+						SNew(SHorizontalBox)
+						+SHorizontalBox::Slot()
+						.FillWidth(1.0f)
+						.Padding(FMargin(4.0f))
+						[
+							SAssignNew(DetailsViewWidget, SDetailsViewWidget)
+						]
+
+						+SHorizontalBox::Slot()
+						.FillWidth(1.0f)
+						.Padding(FMargin(4.0f))
+						[
+							SAssignNew(SceneOutlinerWidget, SSceneOutlinerWidget)
+						]
+
+					]
+				
+				]	
 
 			]
 		];
 }
 
-void FSlateGuideModalWindowModule::PluginButtonClicked()
+void FSlateGuideModule::PluginButtonClicked()
 {
 	FGlobalTabmanager::Get()->InvokeTab(StyleGuideTabName);
 }
 
-void FSlateGuideModalWindowModule::AddMenuExtension(FMenuBuilder& Builder)
+void FSlateGuideModule::AddMenuExtension(FMenuBuilder& Builder)
 {
-	Builder.AddMenuEntry(FModalWindowCommands::Get().OpenPluginWindow);
+	Builder.AddMenuEntry(FSlateGuideCommands::Get().OpenPluginWindow);
 }
 
-void FSlateGuideModalWindowModule::AddToolbarExtension(FToolBarBuilder& Builder)
+void FSlateGuideModule::AddToolbarExtension(FToolBarBuilder& Builder)
 {
-	Builder.AddToolBarButton(FModalWindowCommands::Get().OpenPluginWindow);
+	Builder.AddToolBarButton(FSlateGuideCommands::Get().OpenPluginWindow);
 }
 
 #undef LOCTEXT_NAMESPACE
 	
-IMPLEMENT_MODULE(FSlateGuideModalWindowModule, SlateGuideModalWindow)
+IMPLEMENT_MODULE(FSlateGuideModule, SlateGuide)

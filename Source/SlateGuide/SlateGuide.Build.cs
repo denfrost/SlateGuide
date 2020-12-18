@@ -1,25 +1,25 @@
-// Copyright 1998-2018 Epic Games, Inc. All Rights Reserved.
+// Copyright 1998-2019 Epic Games, Inc. All Rights Reserved.
 
 using UnrealBuildTool;
 
-public class SlateGuideToolbar : ModuleRules
+public class SlateGuide : ModuleRules
 {
-	public SlateGuideToolbar(ReadOnlyTargetRules Target) : base(Target)
+	public SlateGuide(ReadOnlyTargetRules Target) : base(Target)
 	{
 		PCHUsage = ModuleRules.PCHUsageMode.UseExplicitOrSharedPCHs;
 		
 		PublicIncludePaths.AddRange(
 			new string[] {
-				// ... add public include paths required here ...
-                "SlateGuideToolbar/Public"
-			}
+                // ... add public include paths required here ...
+                "SlateGuide/Public"
+            }
 			);
 				
 		
 		PrivateIncludePaths.AddRange(
 			new string[] {
 				// ... add other private include paths required here ...
-                "SlateGuideToolbar/Private"
+                "SlateGuide/Private"
 			}
 			);
 			
@@ -44,6 +44,8 @@ public class SlateGuideToolbar : ModuleRules
 				"Engine",
 				"Slate",
 				"SlateCore",
+                "EditorStyle",
+                "SceneOutliner"                 
 				// ... add private dependencies that you statically link with here ...	
 			}
 			);

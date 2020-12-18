@@ -3,7 +3,7 @@
 #include "Widgets/SNotificationsWidget.h"
 #include "SlateOptMacros.h"
 #include <EditorStyleSet.h>
-#include "SlateGuideModalWindow.h"
+#include "SlateGuide.h"
 #include <Widgets/SBoxPanel.h>
 #include <Widgets/Notifications/SNotificationList.h>
 #include <Framework/Notifications/NotificationManager.h>
@@ -12,7 +12,7 @@
 BEGIN_SLATE_FUNCTION_BUILD_OPTIMIZATION
 
 
-#define LOCTEXT_NAMESPACE "FSlateGuideModalWindowModule"
+#define LOCTEXT_NAMESPACE "FSlateGuideModule"
 
 void SNotificationsWidget::Construct(const FArguments& InArgs)
 {
@@ -35,7 +35,7 @@ void SNotificationsWidget::Construct(const FArguments& InArgs)
 				[
 					SNew(SButton)
 					.ContentPadding(FMargin(1.0f))
-					.OnClicked(this, &SNotificationsWidget::OnCreateModalWindowNotificationInfo)
+					.OnClicked(this, &SNotificationsWidget::OnCreateNotificationInfo)
 					.Text(LOCTEXT("CreateNotification", "Create Notification Info"))
 				]
 				+ SHorizontalBox::Slot()
@@ -44,7 +44,7 @@ void SNotificationsWidget::Construct(const FArguments& InArgs)
 				[
 					SNew(SButton)
 					.ContentPadding(FMargin(1.0f))
-					.OnClicked(this, &SNotificationsWidget::OnCreateModalWindowNotificationWithButtons)
+					.OnClicked(this, &SNotificationsWidget::OnCreateNotificationWithButtons)
 					.Text(LOCTEXT("CreateNotificationWithButton", "Create Notification With Buttons"))
 				]
 			]
@@ -53,7 +53,7 @@ void SNotificationsWidget::Construct(const FArguments& InArgs)
 	
 }
 
-FReply SNotificationsWidget::OnCreateModalWindowNotificationInfo()
+FReply SNotificationsWidget::OnCreateNotificationInfo()
 {
 	const FText NotificationText = LOCTEXT("SlateGuideCreateNotificationInfo", "Everybody wants to be a cat!");
 
@@ -68,7 +68,7 @@ FReply SNotificationsWidget::OnCreateModalWindowNotificationInfo()
 	return FReply::Handled();
 }
 
-FReply SNotificationsWidget::OnCreateModalWindowNotificationWithButtons()
+FReply SNotificationsWidget::OnCreateNotificationWithButtons()
 {
 	const FText NotificationText = LOCTEXT("SlateGuideCreateNotificationButtons", "Why should you be first?");
 

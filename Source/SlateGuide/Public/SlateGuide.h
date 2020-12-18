@@ -7,11 +7,16 @@
 #include "Widgets/SBasicWidget.h"
 #include "Widgets/SNotificationsWidget.h"
 #include "Widgets/SDetailsViewWidget.h"
+#include "Settings/SlateGuideDetailsViewSettings.h"
+#include "Widgets/SSceneOutlinerWidget.h"
+//#include "Widgets/SBasicWidget.h"
+//#include "Widgets/SNotificationsWidget.h"
+//#include "Widgets/SDetailsViewWidget.h"
 
 class FToolBarBuilder;
 class FMenuBuilder;
 
-class FSlateGuideModalWindowModule : public IModuleInterface
+class FSlateGuideModule : public IModuleInterface
 {
 public:
 
@@ -31,7 +36,8 @@ private:
 
 	TSharedPtr<class SBasicWidget> BasicWidget;
 	TSharedPtr<class SNotificationsWidget> NotificationWidget;
-	TSharedPtr<class SDetailsViewWidget> DetailsViewWidget;
+	TSharedPtr<class SDetailsViewWidget> DetailsViewWidget; 
+	TSharedPtr<class SSceneOutlinerWidget> SceneOutlinerWidget;
 
 	USlateGuideDetailsViewSettings* DetailSettings;
 private:

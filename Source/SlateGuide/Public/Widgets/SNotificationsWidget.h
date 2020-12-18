@@ -8,7 +8,7 @@
 /**
  * 
  */
-class SLATEGUIDEMODALWINDOW_API SNotificationsWidget : public SCompoundWidget
+class SLATEGUIDE_API SNotificationsWidget : public SCompoundWidget
 {
 public:
 	SLATE_BEGIN_ARGS(SNotificationsWidget)
@@ -21,10 +21,10 @@ public:
 private:
 
 	//An example of creating a notification in UE4.
-	FReply OnCreateModalWindowNotificationInfo();
+	FReply OnCreateNotificationInfo();
 
 	//An example of creating a notification with buttons in UE4.
-	FReply OnCreateModalWindowNotificationWithButtons();
+	FReply OnCreateNotificationWithButtons();
 
 	/** Used to reference to the active restart notification */
 	TWeakPtr<SNotificationItem> NotificationPtr;

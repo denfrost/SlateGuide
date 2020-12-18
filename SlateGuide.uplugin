@@ -15,22 +15,7 @@
 	"Installed": false,
   "Modules": [
     {
-      "Name": "SlateGuideToolbar",
-      "Type": "Editor",
-      "LoadingPhase": "PostEngineInit"
-    },
-    {
-      "Name": "SlateGuideSettings",
-      "Type": "Editor",
-      "LoadingPhase": "PostEngineInit"
-    },
-    {
-      "Name": "SlateGuideModeCategory",
-      "Type": "Editor",
-      "LoadingPhase": "PostEngineInit"
-    },
-    {
-      "Name": "SlateGuideModalWindow",
+      "Name": "SlateGuide",
       "Type": "Editor",
       "LoadingPhase": "PostEngineInit"
     }

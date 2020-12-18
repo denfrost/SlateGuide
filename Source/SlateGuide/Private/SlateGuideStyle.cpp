@@ -1,14 +1,14 @@
 // Copyright 1998-2019 Epic Games, Inc. All Rights Reserved.
 
-#include "ModalWindowStyle.h"
+#include "SlateGuideStyle.h"
 #include "Styling/SlateStyleRegistry.h"
 #include "Framework/Application/SlateApplication.h"
 #include "Slate/SlateGameResources.h"
 #include "Interfaces/IPluginManager.h"
 
-TSharedPtr< FSlateStyleSet > FModalWindowStyle::StyleInstance = NULL;
+TSharedPtr< FSlateStyleSet > FSlateGuideStyle::StyleInstance = NULL;
 
-void FModalWindowStyle::Initialize()
+void FSlateGuideStyle::Initialize()
 {
 	if (!StyleInstance.IsValid())
 	{
@@ -17,16 +17,16 @@ void FModalWindowStyle::Initialize()
 	}
 }
 
-void FModalWindowStyle::Shutdown()
+void FSlateGuideStyle::Shutdown()
 {
 	FSlateStyleRegistry::UnRegisterSlateStyle(*StyleInstance);
 	ensure(StyleInstance.IsUnique());
 	StyleInstance.Reset();
 }
 
-FName FModalWindowStyle::GetStyleSetName()
+FName FSlateGuideStyle::GetStyleSetName()
 {
-	static FName StyleSetName(TEXT("FModalWindowStyle"));
+	static FName StyleSetName(TEXT("FSlateGuideStyle"));
 	return StyleSetName;
 }
 
@@ -40,9 +40,9 @@ const FVector2D Icon16x16(16.0f, 16.0f);
 const FVector2D Icon20x20(20.0f, 20.0f);
 const FVector2D Icon40x40(40.0f, 40.0f);
 
-TSharedRef< FSlateStyleSet > FModalWindowStyle::Create()
+TSharedRef< FSlateStyleSet > FSlateGuideStyle::Create()
 {
-	TSharedRef< FSlateStyleSet > Style = MakeShareable(new FSlateStyleSet("FModalWindowStyle"));
+	TSharedRef< FSlateStyleSet > Style = MakeShareable(new FSlateStyleSet("FSlateGuideStyle"));
 	Style->SetContentRoot(IPluginManager::Get().FindPlugin("SlateGuide")->GetBaseDir() / TEXT("Resources"));
 
 	Style->Set("SAW.OpenPluginWindow", new IMAGE_BRUSH(TEXT("ButtonIcon_40x"), Icon40x40));
@@ -56,7 +56,7 @@ TSharedRef< FSlateStyleSet > FModalWindowStyle::Create()
 #undef TTF_FONT
 #undef OTF_FONT
 
-void FModalWindowStyle::ReloadTextures()
+void FSlateGuideStyle::ReloadTextures()
 {
 	if (FSlateApplication::IsInitialized())
 	{
@@ -64,7 +64,7 @@ void FModalWindowStyle::ReloadTextures()
 	}
 }
 
-const ISlateStyle& FModalWindowStyle::Get()
+const ISlateStyle& FSlateGuideStyle::Get()
 {
 	return *StyleInstance;
 }

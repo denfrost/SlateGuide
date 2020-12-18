@@ -7,8 +7,9 @@
 #include "SlateOptMacros.h"
 #include <Widgets/Input/SButton.h>
 #include <PropertyEditorModule.h>
+#include "Settings/SlateGuideDetailsViewSettings.h"
 
-#define LOCTEXT_NAMESPACE "FSlateGuideModalWindowModule"
+#define LOCTEXT_NAMESPACE "FSlateGuideModule"
 
 BEGIN_SLATE_FUNCTION_BUILD_OPTIMIZATION
 void SDetailsViewWidget::Construct(const FArguments& InArgs)
@@ -26,19 +27,25 @@ void SDetailsViewWidget::Construct(const FArguments& InArgs)
 	ChildSlot
 	[
 		SNew(SVerticalBox)
+		+SVerticalBox::Slot()
+		.MaxHeight(32.0f)
+		.Padding(FMargin(4.0f))
+		[
+			SNew(STextBlock)
+			.Text(LOCTEXT("DetailsViewTitle", "Details View Example: "))
+			.Font(FCoreStyle::GetDefaultFontStyle("Regular", 13))
+		]
 		+ SVerticalBox::Slot()
-		.AutoHeight()
-		.VAlign(VAlign_Center)
+		.FillHeight(1.0f)
+		.VAlign(VAlign_Fill)
 		[
 			DetailsView.ToSharedRef()
 		]
 	];
-	
 }
 
 FReply SDetailsViewWidget::OnCreateDetailsView()
 {
-
 	return FReply::Handled();
 }
 

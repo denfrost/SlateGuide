@@ -8,7 +8,7 @@
 /**
  * 
  */
-class SLATEGUIDEMODALWINDOW_API SBasicWidget : public SCompoundWidget
+class SLATEGUIDE_API SBasicWidget : public SCompoundWidget
 {
 public:
 	SLATE_BEGIN_ARGS(SBasicWidget)

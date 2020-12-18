@@ -3,23 +3,23 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "SDetailsViewWidget.h"
-#include "Settings/SlateGuideDetailsViewSettings.h"
+#include "SSceneOutlinerWidget.h"
 #include "Widgets/SCompoundWidget.h"
 #include <IDetailsView.h>
 
 /**
  * 
  */
-class SLATEGUIDEMODALWINDOW_API SDetailsViewWidget : public SCompoundWidget
+class SLATEGUIDE_API SSceneOutlinerWidget : public SCompoundWidget
 {
 public:
-	SLATE_BEGIN_ARGS(SDetailsViewWidget)
+	SLATE_BEGIN_ARGS(SSceneOutlinerWidget)
 	{}
 	SLATE_END_ARGS()
 
 	/** Constructs this widget with InArgs */
 	void Construct(const FArguments& InArgs);
+	void OnActorSelectedFromOutliner(AActor* SelectedActor);
 
 	FReply OnCreateDetailsView();
 	FReply OnCreateCustomSceneOutliner();
